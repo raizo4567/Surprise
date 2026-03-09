@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Waves | Love Letter</title>
+    <style>
+        :root {
+            --primary-pink: #ffc2d1;
+            --deep-pink: #fb6f92;
+            --soft-purple: #a389d4;
+            --text-dark: #4a344d;
+            --glass: rgba(255, 255, 255, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fff0f3;
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 50%, #e2afff 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .sparkle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            pointer-events: none;
+            animation: float-up 10s infinite ease-in-out;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .top-nav {
+            position: absolute;
+            top: 40px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .logo-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 900;
+            letter-spacing: 6px;
+            line-height: 1.1;
+            font-size: 1.4rem;
+            transition: 0.3s;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .logo-btn:hover {
+            background: var(--glass);
+            transform: scale(1.05);
+        }
+
+        .char-container {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 30px;
+        }
+
+        .char-gif {
+            width: 380px;
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.9));
+            animation: cozy-glitch 5s infinite;
+        }
+
+        @keyframes cozy-glitch {
+            0%, 90%, 100% { filter: drop-shadow(0 0 30px white) brightness(1); }
+            92% { filter: drop-shadow(2px 0 #ff74a4) brightness(1.2); transform: translateX(2px); }
+            94% { filter: drop-shadow(-2px 0 #74f9ff) brightness(1.2); transform: translateX(-2px); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            z-index: 5;
+        }
+
+        .btn {
+            padding: 20px 47px;
+            border-radius: 50px;
+            border: 2px solid white;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            color: white;
+        }
+
+        .btn-love { background: var(--deep-pink); border-color: var(--deep-pink); }
+        .btn:hover { transform: translateY(-5px); background: white; color: var(--deep-pink); }
+
+        /* --- POPUP STYLES --- */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(74, 52, 77, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .popup {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 0 var(--primary-pink);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .popup.active { transform: scale(1); }
+
+        .popup img {
+            width: 120px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+        }
+
+        .popup h2 {
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            color: var(--deep-pink);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .popup-btns {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .p-btn {
+            padding: 10px 30px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .p-btn-yes { background: var(--deep-pink); color: white; }
+        .p-btn-no { background: #eee; color: #999; }
+        .p-btn:hover { opacity: 0.8; transform: scale(1.05); }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="garden.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="hero">
+        <div id="sparkle-layer"></div>
+        <nav class="top-nav">
+            <button class="logo-btn" onclick="openSecretPopup()">STARLIT<br>SYNCHRONY</button>
+            
+            <div class="nav-controls">
+                <button id="musicBtn" class="btn" style="padding: 10px 15px; font-size: 0.8rem;" onclick="toggleMusic()">🎵 PAUSE</button>
+                <button class="btn" style="padding: 10px 25px; font-size: 0.8rem;" onclick="showTransferPopup('valen.html', '💖 ENTERING COZY MODE 💖')">LOGOUT</button>
+            </div>
+        </nav>
+
+        <div class="char-container">
+            <img src="https://media.giphy.com/media/1tiwQhwReXrSQ66wsB/giphy.gif" class="char-gif">
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-love" onclick="startLoveSequence()">💌 LOVE LETTER</button>
+            <button class="btn" onclick="showTransferPopup('gallery.html', '🖼️ OPENING GALLERY 🖼️')">🖼️ GALLERY</button>
+        </div>
+    </section>
+
+    <div class="overlay" id="love-overlay" onclick="closeLovePopup()">
+        <div class="popup" id="love-popup" onclick="event.stopPropagation()">
+            <img src="" id="love-img">
+            <h2 id="love-text"></h2>
+            <div class="popup-btns" id="love-btns">
+                <button class="p-btn p-btn-yes" onclick="nextLoveStep()">YES!</button>
+                <button class="p-btn p-btn-no" onclick="closeLovePopup()">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="secret-overlay" onclick="closeSecretPopup()">
+        <div class="popup" id="secret-popup" onclick="event.stopPropagation()">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXo1M28ycW96eHBybmZ4eHBybmZ4eHBybmZ4eHBybmZ4ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KztT2c4u8mYYUiMKdJ/giphy.gif" style="width: 200px;">
+            <h2 style="text-align: justify; font-size: 0.95rem;">
+                <strong>Starlit Synchrony</strong> is a poetic and high-concept phrase that represents two souls being perfectly in tune as if their connection was orchestrated by the universe itself. 
+                <br><br>
+                The starlit element evokes something eternal and dreamlike, while synchrony draws on the idea of perfect timing—like two processors running the same code flawlessly. It symbolizes a bond that transcends physical miles, proving that even across vast distances, your hearts remain beautifully aligned. ✨
+            </h2>
+            <div class="popup-btns">
+                <button class="p-btn p-btn-yes" onclick="closeSecretPopup()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BACKGROUND MUSIC ---
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+        music.volume = 0.1;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerText = "🎵 PLAY";
+            } else {
+                music.play();
+                musicBtn.innerText = "🎵 PAUSE";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        window.addEventListener('load', () => {
+            music.play().then(() => {
+                isPlaying = true;
+                musicBtn.innerText = "🎵 PAUSE";
+            }).catch(() => {});
+        });
+
+        // --- SPARKLES ---
+        const layer = document.getElementById('sparkle-layer');
+        for (let i = 0; i < 30; i++) {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            const size = Math.random() * 5 + 2 + 'px';
+            s.style.width = size; s.style.height = size;
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.animationDuration = Math.random() * 5 + 5 + 's';
+            layer.appendChild(s);
+        }
+
+        // --- LOVE LETTER LOGIC ---
+        let currentStep = 0;
+        const loveOverlay = document.getElementById('love-overlay');
+        const lovePopup = document.getElementById('love-popup');
+        const loveImg = document.getElementById('love-img');
+        const loveText = document.getElementById('love-text');
+        const loveBtns = document.getElementById('love-btns');
+
+        const loveSequence = [
+            { text: "ARE YOU SURE?", img: "https://media.giphy.com/media/yPAWyc35MhDUNrzySi/giphy.gif" },
+            { text: "REALLY REALLY SURE?", img: "https://media.giphy.com/media/m93WfeOUyZwH9wYfUV/giphy.gif" },
+            { text: "LAST CHANCE TO SAY NO...(PLEASE DON'T CLICK NO😿)", img: "https://media.giphy.com/media/QlQdLBS70XJcZY1fLF/giphy.gif" },
+            { text: "I LOVE YOU BABY! ❤️", img: "https://media.giphy.com/media/wNk71OcVtOPncxNHVT/giphy.gif" }
+        ];
+
+        function startLoveSequence() {
+            currentStep = 0;
+            loveBtns.style.display = 'flex';
+            updateLovePopup();
+            loveOverlay.style.display = 'flex';
+            setTimeout(() => lovePopup.classList.add('active'), 10);
+        }
+
+        function nextLoveStep() {
+            currentStep++;
+            if (currentStep < loveSequence.length) {
+                lovePopup.classList.remove('active');
+                setTimeout(() => {
+                    updateLovePopup();
+                    lovePopup.classList.add('active');
+                    if(currentStep === loveSequence.length - 1) {
+                        loveBtns.style.display = 'none';
+                        setTimeout(() => {
+                            closeLovePopup();
+                            showTransferPopup('letter.html', '💖 OPENING YOUR LETTER 💖');
+                        }, 2500);
+                    }
+                }, 200);
+            }
+        }
+
+        function updateLovePopup() {
+            loveText.innerText = loveSequence[currentStep].text;
+            loveImg.src = loveSequence[currentStep].img;
+        }
+
+        function closeLovePopup() {
+            lovePopup.classList.remove('active');
+            setTimeout(() => loveOverlay.style.display = 'none', 300);
+        }
+
+        // --- STARLIT SYNCHRONY LOGIC ---
+        const secretOverlay = document.getElementById('secret-overlay');
+        const secretPopup = document.getElementById('secret-popup');
+
+        function openSecretPopup() {
+            secretOverlay.style.display = 'flex';
+            setTimeout(() => secretPopup.classList.add('active'), 10);
+        }
+
+        function closeSecretPopup() {
+            secretPopup.classList.remove('active');
+            setTimeout(() => secretOverlay.style.display = 'none', 300);
+        }
+
+        // --- TRANSFER / LOADING LOGIC ---
+        function showTransferPopup(targetUrl, successMessage){
+            const transferPopup = document.createElement('div');
+            transferPopup.style = "position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999;";
+            transferPopup.innerHTML = `
+                <div style="font-size:18px;color:#ff85c1;margin-bottom:20px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">⚡ LOADING CONTENT...</div>
+                <div style="width:300px;height:16px;border:2px solid #ff4d88;border-radius:10px;overflow:hidden;">
+                    <div id="transferBar" style="height:100%;width:0;background:#ff1a75;transition:0.1s;"></div>
+                </div>
+            `;
+            document.body.appendChild(transferPopup);
+
+            let progress = 0;
+            const transferBar = document.getElementById('transferBar');
+            const transfer = setInterval(() => {
+                progress += 5;
+                transferBar.style.width = progress + '%';
+                if(progress >= 100){
+                    clearInterval(transfer);
+                    transferPopup.innerHTML = `<div style="font-size:22px;color:#fff;text-shadow:0 0 10px #ff1a75;font-weight:bold;text-align:center;padding:20px;">${successMessage}</div>`;
+                    setTimeout(() => { window.location.href = targetUrl; }, 1200);
+                }
+            }, 60);
+        }
+    </script>
+</body>
+</html>

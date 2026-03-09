@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wuthering Waves | Midnight Letter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Dancing+Script:wght@600&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-pink: #fb6f92;
+            --soft-pink: #ffc2d1;
+            --dark-pink: #d6455d;
+            --glass: rgba(255, 255, 255, 0.1);
+            --night-sky: linear-gradient(180deg, #020408 0%, #0b132b 50%, #1c2541 100%);
+            --rain-color: rgba(175, 210, 255, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--night-sky);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* --- RAIN EFFECT --- */
+        #rain-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .drop {
+            position: absolute;
+            background: linear-gradient(transparent, var(--rain-color));
+            width: 1px;
+            top: -100px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+
+        /* --- STAR FIELD & SPARKLES --- */
+        #sparkle-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle var(--t-duration) infinite ease-in-out;
+        }
+
+        .sparkle {
+            position: absolute; 
+            background: white; 
+            border-radius: 50%;
+            animation: float-up 10s infinite ease-in-out;
+            box-shadow: 0 0 8px #fff, 0 0 15px var(--deep-pink);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* --- NAVIGATION --- */
+        .top-nav {
+            position: absolute;
+            top: 40px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .nav-title {
+            font-family: 'Press Start 2P', cursive;
+            font-weight: 900; 
+            letter-spacing: 4px; 
+            color: white;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            text-shadow: 0 0 15px rgba(251, 111, 146, 0.8), 2px 2px 0px var(--dark-pink);
+        }
+
+        .btn-nav {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid white;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: 0.3s;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .btn-nav:hover { 
+            background: white; 
+            color: #0b132b; 
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        /* --- ENVELOPE --- */
+        .envelope-wrapper {
+            position: relative; width: 360px; height: 230px;
+            cursor: pointer; z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .envelope-wrapper:hover { transform: scale(1.08); }
+
+        .envelope {
+            position: relative; width: 100%; height: 100%;
+            background: #fff; border-radius: 0 0 12px 12px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            z-index: 30;
+        }
+
+        .flap {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-top: 125px solid #fce4ec; 
+            border-left: 180px solid transparent;
+            border-right: 180px solid transparent; 
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            z-index: 40;
+        }
+
+        .pocket {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; border-radius: 0 0 12px 12px;
+            clip-path: polygon(0% 0%, 50% 50%, 100% 0%, 100% 100%, 0% 100%);
+            z-index: 35;
+        }
+
+        .seal {
+            position: absolute; top: 105px; left: 50%; transform: translateX(-50%); 
+            width: 50px; height: 50px;
+            background: var(--dark-pink); border-radius: 50%; z-index: 50;
+            box-shadow: 0 0 15px var(--deep-pink);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.4rem; transition: 0.4s;
+        }
+
+        /* --- MODAL POPUP (WIDER VERSION) --- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(2, 4, 8, 0.92);
+            backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .letter-popup {
+            background: #fff;
+            width: 95%; 
+            max-width: 800px; /* Made this wider as requested */
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.8) translateY(30px);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            box-shadow: 0 0 50px rgba(251, 111, 146, 0.3);
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-overlay.active .letter-popup { transform: scale(1) translateY(0); }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem; /* Slightly larger font for the wider layout */
+            line-height: 1.6; 
+            color: #2d3436;
+            text-align: left; /* Better for reading longer lines */
+        }
+
+        .letter-content h2 { 
+            margin-bottom: 25px; 
+            color: var(--deep-pink); 
+            font-size: 2.8rem; 
+            text-align: center;
+        }
+
+        .letter-content p {
+            margin-bottom: 20px;
+            text-indent: 20px;
+        }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 25px;
+            font-size: 2.2rem; color: #ccc; cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-btn:hover { color: var(--dark-pink); }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="drwn.vvv.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="sparkle-layer"></div>
+    <div id="rain-container"></div>
+
+    <nav class="top-nav">
+        <div class="nav-title">STARLIT<br>SYNCHRONY</div>
+        <div style="display:flex; gap:10px;">
+            <button id="musicBtn" class="btn-nav" onclick="toggleMusic(event)">🎵 PLAY</button>
+            <button class="btn-nav" onclick="showTransferPopup('mainpage.html', '💖 RETURNING HOME 💖')">← BACK HOME</button>
+        </div>
+    </nav>
+
+    <div class="envelope-wrapper" onclick="openPopup()">
+        <div class="flap"></div>
+        <div class="seal">❤</div>
+        <div class="pocket"></div>
+        <div class="envelope"></div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="letter-popup">
+            <span class="close-btn" onclick="closePopup()">×</span>
+            <div class="letter-content">
+                <h2>Hello Dear,</h2>
+                <p>It’s crazy to think our "Starlit Synchrony" began in a world of pixels on Roblox (Hutan). We started as characters in a game, but you became the most real thing in my life. Being in this LDR means we’re playing on a chatting and hangout games and even date in games hahaha, but ofcourse there’s no one else I’d rather have by my side.</p>
+
+                <p>I know your mind sometimes goes into loops, but I want you to slowly let go of the overthinking. Try to forget what those aunts or uncles have said and leave your past self behind, I know it’s hard, but just try to let it go slowly with practice. You don’t have to carry everything alone anymore, I’m here to debug those thoughts with you. You’ve already proven how much you believe in us, and I’ll never forget how you stood by me and helped me so much during my broke era (I know your dic are much bigger during that time) but I'II prove you that i'm a man in this relay. Also you saw my value when I felt like I had none, and that's a debt of love I’ll happily spend a lifetime repaying.</p>
+
+                <p>You really are the ultimate "beauty with brains." I love this manja girl who afraid to show her sweet side sometimes hehe, even if you’re also a total bully to me sometimes (Yeah that's 1 of  your love language can't do much, but I love every bit of it + i'm not a masochist). And this freaky girl ha always make me horny, you keep life exciting.</p>
+
+                <p>I feel so lucky to be your first boyfriend. I honestly can’t wait for the day when I can finally reach out and pinch those cute cheeks of yours in person instead of just seeing them through a screen. I'm sorry I can't spoil you with more presents right now "my dic shorten" but I make sure that in the future, I will be the man who can give you everything you deserve (I'll be the diddy next). Thank you for trusting me, Until then, let’s keep our hearts in perfect 'Starlit Synchrony'.</p>
+                
+                <div style="text-align: right; margin-top: 40px;">
+                    <p style="margin-bottom: 5px;">With all my love,</p>
+                    <p style="color: var(--deep-pink); font-size: 2.2rem; margin-top: 0;">Your Person ❤</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+        music.volume = 0.15;
+
+        // --- DENSE STAR & SPARKLE FIELD ---
+        const sparkleLayer = document.getElementById('sparkle-layer');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2 + 1 + 'px';
+            star.style.width = size; star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.setProperty('--t-duration', 2 + Math.random() * 4 + 's');
+            star.style.animationDelay = Math.random() * 5 + 's';
+            sparkleLayer.appendChild(star);
+        }
+
+        // Floating Particles
+        for (let i = 0; i < 30; i++) {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            const size = Math.random() * 3 + 2 + 'px';
+            s.style.width = size; s.style.height = size;
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.animationDuration = 7 + Math.random() * 8 + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            sparkleLayer.appendChild(s);
+        }
+
+        // Rain Logic
+        const rainContainer = document.getElementById('rain-container');
+        for (let i = 0; i < 60; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'drop';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.animationDuration = 0.7 + Math.random() * 0.8 + 's';
+            drop.style.animationDelay = Math.random() * 5 + 's';
+            drop.style.height = 40 + Math.random() * 80 + 'px';
+            drop.style.opacity = Math.random() * 0.2;
+            rainContainer.appendChild(drop);
+        }
+
+        function startMusic() {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.innerText = "🎵 PAUSE";
+                }).catch(e => {});
+            }
+        }
+
+        function toggleMusic(event) {
+            event.stopPropagation();
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerText = "🎵 PLAY";
+            } else {
+                music.play();
+                musicBtn.innerText = "🎵 PAUSE";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function openPopup() {
+            document.getElementById('modalOverlay').classList.add('active');
+            startMusic();
+        }
+
+        function closePopup() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closePopup();
+        });
+
+        // --- NEW COZY LOADING SCREEN DESIGN ---
+        function showTransferPopup(targetUrl, successMessage){
+            const transferPopup = document.createElement('div');
+            transferPopup.style.position = 'fixed';
+            transferPopup.style.inset = '0';
+            transferPopup.style.background = 'rgba(0,0,0,0.95)';
+            transferPopup.style.display = 'flex';
+            transferPopup.style.flexDirection = 'column';
+            transferPopup.style.alignItems = 'center';
+            transferPopup.style.justifyContent = 'center';
+            transferPopup.style.zIndex = '9999';
+            transferPopup.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+            transferPopup.innerHTML = `
+                <div style="font-size:18px;color:#ff85c1;margin-bottom:20px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">
+                    ⚡ LOADING CONTENT...
+                </div>
+                <div style="width:300px;height:16px;border:2px solid #ff4d88;border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.1);">
+                    <div id="transferBar" style="height:100%;width:0;background:#ff1a75;transition:width 0.1s ease;"></div>
+                </div>
+            `;
+
+            document.body.appendChild(transferPopup);
+
+            let progress = 0;
+            const transferBar = document.getElementById('transferBar');
+            const transfer = setInterval(() => {
+                progress += 4;
+                transferBar.style.width = progress + '%';
+                if(progress >= 100){
+                    clearInterval(transfer);
+                    transferPopup.innerHTML = `
+                        <div style="font-size:22px;color:#fff;text-shadow:0 0 10px #ff1a75;font-weight:bold;text-align:center;padding:20px;">
+                            ${successMessage}
+                        </div>
+                    `;
+                    setTimeout(() => { window.location.href = targetUrl; }, 1200);
+                }
+            }, 50);
+        }
+    </script>
+</body>
+</html>

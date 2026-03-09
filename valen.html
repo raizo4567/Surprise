@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forever Duo 💗</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+/* ... (All your existing CSS remains the same) ... */
+*{box-sizing:border-box}
+
+:root {
+  --deep-pink: #fb6f92;
+  --soft-pink: #ffc2d1;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Press Start 2P', monospace;
+  overflow:hidden;
+  background:linear-gradient(135deg,#ffafbd,#ffc3a0); 
+  color:#a64d79;
+}
+
+/* STARS */
+.star{
+  position:absolute;
+  width:3px;height:3px;
+  background:#fff;
+  border-radius:50%;
+  animation:twinkle 3s infinite;
+}
+@keyframes twinkle{50%{opacity:.2}}
+
+/* LOADING */
+#loadingScreen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  background:#ffafbd;
+  z-index: 100;
+}
+.progress-container{width:350px;height:20px;border:3px solid #fff; background:rgba(255,255,255,0.2);}
+.progress-block{height:100%;width:0;background:#fff}
+
+/* MAIN */
+.page{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:.6s}
+.hidden{opacity:0;pointer-events:none;transform:scale(.9)}
+
+.card{
+  width:440px;
+  background:#fff;
+  border:6px solid #ff99aa;
+  border-radius:24px;
+  padding:35px;
+  text-align:center;
+  box-shadow: 0 20px 40px rgba(166, 77, 121, 0.3);
+}
+
+.pixel-heart{font-size:70px; color:#ff4d6d; animation:pulse 1.2s infinite; margin-bottom:10px;}
+@keyframes pulse{50%{transform:scale(1.2)}}
+
+h1 { font-size: 20px; line-height: 1.6; margin: 20px 0; }
+p { font-size: 12px; line-height: 2; color: #8a3a61; }
+
+button{
+  background:#ff758c;
+  border:none;
+  border-bottom: 5px solid #d6455d;
+  color:#fff;
+  padding:18px 28px;
+  font-size:12px;
+  cursor:pointer;
+  border-radius: 15px;
+  font-family:'Press Start 2P';
+  transition: .2s;
+}
+button:hover{transform:scale(1.1); background:#ff5c77;}
+button:active{transform:translateY(4px); border-bottom:none;}
+
+.no{background:#ffb3c1; border-bottom: 5px solid #fa8a9d; color:#fff}
+
+.gif-wrap{width:220px; margin:15px auto; border:5px solid #ffe5ec; border-radius:15px; overflow:hidden;}
+.gif-wrap img{width:100%; display: block;}
+
+/* CELEBRATION OVERLAY - FIXED DESIGN */
+#celebration {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: none; /* Controlled via JS */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    text-align: center;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+#celebration.show {
+    display: flex;
+    animation: fadeIn 0.5s forwards;
+}
+
+#celebration img {
+    width: 250px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 30px var(--deep-pink);
+    border: 3px solid white;
+}
+
+.big-text {
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    text-shadow: 0 0 20px #ff1a75, 0 0 40px #ff1a75;
+    margin-bottom: 20px;
+}
+
+.sub-text {
+    color: #ffc2d1;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 14px;
+    animation: textPulse 1.5s infinite;
+}
+
+@keyframes textPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* CONFETTI & HEARTS */
+.confetti{
+  position:absolute;
+  width:12px;height:12px;
+  z-index: 10001;
+  animation:explode 2.5s ease-out forwards;
+}
+@keyframes explode{
+  from{transform:translate(0,0) scale(1.5);opacity:1}
+  to{transform:translate(var(--x),var(--y)) rotate(720deg);opacity:0}
+}
+
+.heart{
+  position:absolute;
+  font-size:35px; 
+  z-index: 10001;
+  filter: drop-shadow(0 0 8px #fff);
+  animation:heartFall 3s linear forwards;
+}
+@keyframes heartFall{
+  from{transform:translateY(-50px);opacity:1}
+  to{transform:translateY(110vh);opacity:0}
+}
+
+.firework{
+  position:absolute;
+  width:12px;height:12px;
+  background:#fff;
+  border-radius:50%;
+  box-shadow: 0 0 30px #fff, 0 0 60px #ff0055, 0 0 100px #ffb3c1;
+  z-index: 10001;
+  animation:fireworkBlast 1.2s ease-out forwards;
+}
+@keyframes fireworkBlast{
+  from{transform:scale(0.5);opacity:1}
+  to{transform:scale(40);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="romanticMusic" loop>
+  <source src="sao.mp3" type="audio/mpeg">
+</audio>
+
+<div id="loadingScreen">
+  <div style="color:white; margin-bottom:20px; font-size:16px;">LOADING CO-OP...</div>
+  <div class="progress-container">
+    <div class="progress-block" id="bar"></div>
+  </div>
+</div>
+
+<div class="page hidden" id="main">
+  <div class="card">
+    <div class="pixel-heart">❤</div>
+    <div class="gif-wrap">
+      <img id="mainGif" src="https://media.giphy.com/media/LOXAmVhFOdo0BmP9n6/giphy.gif">
+    </div>
+    <h1>Will you be my Player 2?</h1>
+    <p>You're the only one I’d pause my game for. 🎮<br>Two hearts 💞<br>Found the Rare Loot: It’s you.⭐</p>
+    <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;">
+      <button onclick="celebrate()">YES!(I'M A MALAY GUY!) 💖</button>
+      <button class="no" id="noBtn" onclick="moveNo(this)">No 🙈</button>
+    </div>
+  </div>
+</div>
+
+<div id="celebration">
+  <img src="https://media.giphy.com/media/pbKSEFrEEudOIclaL8/giphy.gif">
+  <div class="big-text">🏆 SHE SAID YES! 🏆<br><span style="font-size: 0.8em; color: #ffc2d1;">You Are My Favorite 'Always'!</span></div>
+  <div class="sub-text">Loading to Main Page...</div>
+</div>
+
+<script>
+// GIF LOGIC FOR "NO" BUTTON
+const mainGif = document.getElementById('mainGif');
+const sadGifs = [
+  "https://media.giphy.com/media/cvsEcla8QPbNRyMO0o/giphy.gif",
+  "https://media.giphy.com/media/YXY1xRLgUE9n02YGc4/giphy.gif",
+  "https://media.giphy.com/media/iapHPgb3funNMt4OCO/giphy.gif",
+  "https://media.giphy.com/media/QlQdLBS70XJcZY1fLF/giphy.gif",
+  "https://media.giphy.com/media/SVkhYVCi8fKPKvypi6/giphy.gif",
+  "https://media.giphy.com/media/uWzRXTQRoQzxDO9W0p/giphy.gif",
+  "https://media.giphy.com/media/7SDfDM318Pqt4eGdha/giphy.gif"
+];
+let gifIndex = 0;
+
+// MUSIC LOGIC
+const music = document.getElementById('romanticMusic');
+music.volume = 0.3; 
+
+function playMusic() {
+    music.play().catch(() => {
+        console.log("Autoplay blocked. Waiting for user interaction.");
+    });
+}
+
+// STARS
+for(let i=0;i<80;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  document.body.appendChild(s);
+}
+
+// LOADING BAR
+let p=0;
+const bar=document.getElementById('bar');
+const loadingScreen = document.getElementById('loadingScreen');
+const main = document.getElementById('main');
+const celebration = document.getElementById('celebration');
+
+const load=setInterval(()=>{
+  p+=5;
+  bar.style.width=p+'%';
+  if(p>=100){
+    clearInterval(load);
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+        loadingScreen.style.display='none';
+        main.classList.remove('hidden');
+        playMusic();
+    }, 500);
+  }
+},100);
+
+document.body.addEventListener('click', () => {
+    playMusic();
+}, { once: true });
+
+// MOVE NO BUTTON & CHANGE GIF
+function moveNo(b){
+  playMusic(); 
+  
+  // Change the GIF to a sad one
+  mainGif.src = sadGifs[gifIndex];
+  gifIndex = (gifIndex + 1) % sadGifs.length;
+
+  b.style.position='fixed';
+  b.style.left=Math.random()*70+15+'%';
+  b.style.top=Math.random()*70+15+'%';
+}
+
+// CELEBRATE FUNCTION
+function celebrate(){
+  playMusic();
+  celebration.classList.add('show');
+
+  for(let i=0;i<150;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    const colors = ['#ff0055', '#ffffff', '#ffd700', '#ff4d6d', '#ff8da1'];
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.left='50%';
+    c.style.top='50%';
+    c.style.setProperty('--x',`${Math.random()*1000-500}px`);
+    c.style.setProperty('--y',`${Math.random()*1000-500}px`);
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),2500);
+  }
+
+  const heartInterval=setInterval(()=>{
+    const h=document.createElement('div');
+    h.className='heart';
+    h.innerText=['💖','❤️','💘','✨'][Math.floor(Math.random()*4)];
+    h.style.left=Math.random()*100+'%';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),3000);
+  },100);
+
+  for(let i=0;i<12;i++){
+    setTimeout(()=>{
+      const f=document.createElement('div');
+      f.className='firework';
+      f.style.left=Math.random()*80+10+'%';
+      f.style.top=Math.random()*60+10+'%';
+      document.body.appendChild(f);
+      setTimeout(()=>f.remove(),1200);
+    },i*250);
+  }
+
+  setTimeout(()=>{
+    clearInterval(heartInterval);
+    window.location.href="mainpage.html";
+  },4000);
+}
+</script>
+
+</body>
+</html>
